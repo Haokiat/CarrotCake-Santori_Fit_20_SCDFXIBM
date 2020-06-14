@@ -1,0 +1,142 @@
+[{
+    "id": "6fba245c.05da0c",
+    "type": "tab",
+    "label": "Carrotcake",
+    "disabled": false,
+    "info": ""
+}, {
+    "id": "f3938775.b14688",
+    "type": "ibmiot in",
+    "z": "6fba245c.05da0c",
+    "authentication": "quickstart",
+    "apiKey": "",
+    "inputType": "evt",
+    "logicalInterface": "",
+    "ruleId": "",
+    "deviceId": "Smart_watch_1",
+    "applicationId": "",
+    "deviceType": "+",
+    "eventType": "+",
+    "commandType": "",
+    "format": "json",
+    "name": "Operation Band",
+    "service": "quickstart",
+    "allDevices": "",
+    "allApplications": "",
+    "allDeviceTypes": true,
+    "allLogicalInterfaces": "",
+    "allEvents": true,
+    "allCommands": "",
+    "allFormats": "",
+    "qos": 0,
+    "x": 260,
+    "y": 200,
+    "wires": [
+        ["7d6dcaf5.efae54"]
+    ]
+}, {
+    "id": "f448c046.393ef",
+    "type": "ibmiot out",
+    "z": "6fba245c.05da0c",
+    "authentication": "quickstart",
+    "apiKey": "",
+    "outputType": "evt",
+    "deviceId": "",
+    "deviceType": "1.0.5",
+    "eventCommandType": "",
+    "format": "json",
+    "data": "",
+    "qos": 0,
+    "name": "Alert the user",
+    "service": "quickstart",
+    "x": 840,
+    "y": 200,
+    "wires": []
+}, {
+    "id": "7d6dcaf5.efae54",
+    "type": "pythonshell in",
+    "z": "6fba245c.05da0c",
+    "name": "Determine if trainee is at risk",
+    "pyfile": "C:\\Users\\Admin\\Desktop\\HIrisk.py",
+    "virtualenv": "",
+    "continuous": false,
+    "stdInData": false,
+    "x": 560,
+    "y": 200,
+    "wires": [
+        ["f448c046.393ef", "8363503.1ec03b"]
+    ],
+    "info": "Heat_injury = False\nif SBP < 90 or SBP > 120:\n    Heat_injury = True\nelif DBP < 60 or DBP > 80:\n    Heat_injury = True\nelif Hrs_of_Sleep < 7:\n    Heat_injury = True\nelif Sweat_during_exercise == 0:\n    Heat_injury = False"
+}, {
+    "id": "8363503.1ec03b",
+    "type": "ibmiot out",
+    "z": "6fba245c.05da0c",
+    "authentication": "quickstart",
+    "apiKey": "",
+    "outputType": "evt",
+    "deviceId": "",
+    "deviceType": "1.0.5",
+    "eventCommandType": "",
+    "format": "json",
+    "data": "",
+    "qos": 0,
+    "name": "Alert the OIC",
+    "service": "quickstart",
+    "x": 830,
+    "y": 260,
+    "wires": []
+}, {
+    "id": "8d5a0fc.13f59f",
+    "type": "comment",
+    "z": "6fba245c.05da0c",
+    "name": "Operation Band function",
+    "info": "This is a simulated operation band.\n\nThe operation band collects and stores data from its various sensors and sends them to Watson IoT.\n\nIt provides the following parameters:\nHeart Rate\nSystolic and Diastolic Blood pressure\nHours of Sleep (using motion sensor)\nSweating during exercise\nBody Temperature",
+    "x": 290,
+    "y": 260,
+    "wires": []
+}, {
+    "id": "dd139dbc.02fcc",
+    "type": "comment",
+    "z": "6fba245c.05da0c",
+    "name": "Determining risk factor",
+    "info": "We wanted to use Watson IoT platform's function to determine if the user is likely to get heat injury by creating a rule action.\n\nHowever, we were unable to do it like how the source describe.\n\nSource: https://developer.ibm.com/recipes/tutorials/visualizing-and-understanding-data-from-ibm-watson-iot-platform-by-using-ibm-data-science-experience/#r_step3\n\nOur plan was to alert the user if the parameters sensed by the operation band exceeds the reference range (which increases the chance for heat injury (such as heat cramp or heat syncope))\n\ne.g. if temperature > 40 degree celsius\nit will alert the user\n\nWe have coded all these in python:\nHeat_injury = False\nif SBP < 90 or SBP > 120:\n    Heat_injury = True\nelif DBP < 60 or DBP > 80:\n    Heat_injury = True\nelif Hrs_of_Sleep < 7:\n    Heat_injury = True\nelif Sweat_during_exercise == 1:\n    Heat_injury = True",
+    "x": 560,
+    "y": 160,
+    "wires": []
+}, {
+    "id": "9f01ac95.f0f45",
+    "type": "comment",
+    "z": "6fba245c.05da0c",
+    "name": "Data storage",
+    "info": "The data collected from user will be saved into a cloudant.\n\nAs the data piles up, the band will become increasingly useful.",
+    "x": 870,
+    "y": 80,
+    "wires": []
+}, {
+    "id": "7f4568c.c498b98",
+    "type": "comment",
+    "z": "6fba245c.05da0c",
+    "name": "Watson Studio",
+    "info": "The data collected will also be put into Watson Studio for analysis.\n\nOur plan was to create a system for analysis, to use the data that were piled up in the cloudant and determine what are the other risk factors for heat injury.\n\nUsually, the band will alert user if they are at risk for heat injury. However, if the system failed to idenify someone at risk of heat injury, and heat injury occurs, the system will make adjustments to the reference range to better identify the trainees with risk of heat injury in the future.\n\nHence, the system will improve overtime, and subsequent batches of trainee will benefit from it.",
+    "x": 1060,
+    "y": 80,
+    "wires": []
+}, {
+    "id": "ab6bd867.917028",
+    "type": "comment",
+    "z": "6fba245c.05da0c",
+    "name": "Alerting Users and OIC",
+    "info": "The OIC will be informed through an alert on his/her mobile devices, informing him/her that the trainee is at risk of heat injury\n\nOn the other hand, the User will be alerted through a vibration on his operation band",
+    "x": 880,
+    "y": 160,
+    "wires": []
+}, {
+    "id": "124a697e.991977",
+    "type": "comment",
+    "z": "6fba245c.05da0c",
+    "name": "Webpage for monitoring",
+    "info": "A webpage was created for OIC to key in the the trainees' band device ID.\n\nThe website will feature the analysis and data stored for the trainee. (Most of the data will be deleted after 30days) And it will providing full information about the trainee's performance, risk for heat injury and sleep cycle.\n\nIf heat injury occurs to the trainee, and the trainee was not alerted, the OIC can indicate through the webpage. The data will then be used to calibrate the reference range (through Watson Studio).",
+    "x": 1180,
+    "y": 200,
+    "wires": []
+}]
